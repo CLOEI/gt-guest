@@ -13,7 +13,7 @@ import (
 	api2captcha "github.com/2captcha/2captcha-go"
 )
 
-const USERAGENT = "Mozilla/5.0 (Linux; Android 13; SM-S901B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36"
+const USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
 
 func main() {
 	var (
@@ -38,6 +38,7 @@ func main() {
 		query := r.URL.Query()
 		if query.Has("url") {
 			data := query.Get("url")
+			fmt.Printf("Working on url: %s\n", data)
 			platformid := query.Get("platformID")
 			initial_token := parse_url_token(data)
 			if initial_token != "" {
@@ -84,10 +85,9 @@ func validate_captcha(_token string, token string, captcha_data string, initial_
 	req.Header.Set("Origin", "https://www.growtopiagame.com")
 	req.Header.Set("Referer", fmt.Sprintf("https://www.growtopiagame.com/player/login?token=%s&platformID=%s", initial_token, platformid))
 	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
-	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.9")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	fmt.Println(req.Body)
+	req.Header.Set("sec-ch-ua-platform", "Windows")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -95,6 +95,13 @@ func validate_captcha(_token string, token string, captcha_data string, initial_
 		log.Println(err)
 		return false
 	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+
+	fmt.Println(string(body))
 	defer resp.Body.Close()
 	return true
 }
