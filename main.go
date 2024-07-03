@@ -87,7 +87,7 @@ func validate_captcha(_token string, token string, captcha_data string, initial_
 	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
 	req.Header.Set("Accept-Language", "en-US,en;q=0.9")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("sec-ch-ua-platform", "Windows")
+	req.Header.Set("Sec-CH-UA-Platform", "Windows")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -110,10 +110,9 @@ func solve_captcha(url string, sitekey string, api_key string) string {
 	client := api2captcha.NewClient(api_key)
 	client.RecaptchaTimeout = 500
 	cap := api2captcha.ReCaptcha{
-		SiteKey:   sitekey,
-		Url:       url,
-		Invisible: true,
-		Action:    "verify",
+		SiteKey: sitekey,
+		Url:     url,
+		Action:  "verify",
 	}
 	req := cap.ToRequest()
 	log.Println("Solving captcha...")
